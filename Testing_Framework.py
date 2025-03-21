@@ -1,12 +1,17 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# Hardcoded data from the Excel sheet (the data you provided)
+# Path to manually downloaded ChromeDriver
+chromedriver_path = r"C:\Windows\chromedriver.exe"
+
+# URL of the Google Form
+form_url = "https://forms.gle/UH68hCXnKnZEWwVWA"
+
+# Data to fill the form
 data = [
     {"Full Name": "Aarav Sharma", "Email": "aarav.sharma@example.com", "Phone Number": "987-654-3210", "Address": "Delhi, Delhi", "Pincode": "110001"},
     {"Full Name": "Priya Patel", "Email": "priya.patel@example.com", "Phone Number": "998-765-4321", "Address": "Mumbai, Maharashtra", "Pincode": "400001"},
@@ -24,20 +29,15 @@ data = [
     {"Full Name": "Deepika Rao", "Email": "deepika.rao@example.com", "Phone Number": "990-567-8901", "Address": "Kochi, Kerala", "Pincode": "682001"},
     {"Full Name": "Arvind Bhatia", "Email": "arvind.bhatia@example.com", "Phone Number": "904-678-9012", "Address": "Chandigarh, Chandigarh", "Pincode": "160001"},
 ]
-
-# URL of the Google Form
-form_url = "https://forms.gle/UH68hCXnKnZEWwVWA"
-
-# Set up the WebDriver with webdriver_manager
-service = Service(ChromeDriverManager().install())
+# Set up the WebDriver using the manually downloaded ChromeDriver
+service = Service(chromedriver_path)
 driver = webdriver.Chrome(service=service)
 
 # Open the Google Form
 driver.get(form_url)
-
 wait = WebDriverWait(driver, 10)
 
-# Loop through the hardcoded data and fill out the form
+# Loop through the data and fill out the form
 for entry in data:
     # Full Name
     full_name_field = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@aria-labelledby="i1 i4"]')))
@@ -52,7 +52,7 @@ for entry in data:
     # Phone Number
     phone_field = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@aria-labelledby="i11 i14"]')))
     phone_field.clear()
-    phone_field.send_keys(str(entry['Phone Number']))
+    phone_field.send_keys(entry['Phone Number'])
 
     # Address
     address_field = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@aria-labelledby="i16 i19"]')))
@@ -62,16 +62,16 @@ for entry in data:
     # Pincode
     pincode_field = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@aria-labelledby="i21 i24"]')))
     pincode_field.clear()
-    pincode_field.send_keys(str(entry['Pincode']))
+    pincode_field.send_keys(entry['Pincode'])
 
     # Submit the form
     submit_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[contains(@class, "NPEfkd RveJvd snByac")]')))
     submit_button.click()
 
-    # Wait for the form to submit and reload
+    # Wait for submission confirmation
     time.sleep(3)
 
-    # Reload the form to fill out the next entry
+    # Reload the form for the next entry
     driver.get(form_url)
     time.sleep(2)
 
